@@ -1,85 +1,78 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { onMounted, ref } from 'vue'
+import service from '@/utils/http'
+
+import type { Ref } from 'vue'
+import type { RequestCommonRes, ITimestamps, ISoftDeletes, IOperators } from '@/types/common'
+
+type IMenu = ITimestamps &
+  ISoftDeletes &
+  IOperators & {
+    ID: number
+    MenuName: string
+    ParentId: number
+    OrderNum: number
+    Url: string
+    Target: string
+    Visible: string
+    Icon: string
+    Remark: string
+    SubMenus: IMenu[]
+  }
+
+const menuDataset: Ref<null | IMenu[]> = ref(null)
+
+onMounted(async () => {
+  const fetchGetMenus = (): Promise<RequestCommonRes<IMenu[]>> => {
+    return service.get('/admin/getMenus')
+  }
+
+  const { Data } = await fetchGetMenus()
+
+  menuDataset.value = Data
+})
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <el-container class="min-h-screen">
+    <el-container>
+      <el-aside class="border-r" width="200px">
+        <el-header class="h-auto flex items-center border-b">
+          <div
+            class="flex-1 text-lg text-black font-bold text-center pointer-events-none select-none flex items-center"
+          >
+            <img height="30" width="30" src="https://www.sablogs.cn/favicon.ico" />
+            <span class="ml-2">SaAdmin</span>
+          </div>
+        </el-header>
+        <el-menu class="!border-none">
+          <template v-for="menuItem in menuDataset" :key="menuItem.ID">
+            <el-sub-menu v-if="menuItem.SubMenus.length > 0" :index="`${menuItem.ID}`">
+              <template #title>
+                <el-icon><component :is="menuItem.Icon" /></el-icon>
+                <span>{{ menuItem.MenuName }}</span>
+              </template>
+              <router-link v-for="subItem in menuItem.SubMenus" :key="subItem.ID" :to="subItem.Url">
+                <el-menu-item :index="`${subItem.ID}`">
+                  <el-icon><component :is="subItem.Icon" /></el-icon>
+                  <span>{{ subItem.MenuName }}</span>
+                </el-menu-item>
+              </router-link>
+            </el-sub-menu>
+            <router-link v-else :to="menuItem.Url">
+              <el-menu-item :index="`${menuItem.ID}`">
+                <el-icon><component :is="menuItem.Icon" /></el-icon>
+                <span>{{ menuItem.MenuName }}</span>
+              </el-menu-item>
+            </router-link>
+          </template>
+        </el-menu>
+      </el-aside>
+      <el-main>
+        <router-view></router-view>
+      </el-main>
+    </el-container>
+  </el-container>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
+<style scoped></style>
