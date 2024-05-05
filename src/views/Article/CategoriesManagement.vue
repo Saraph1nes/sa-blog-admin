@@ -1,5 +1,5 @@
 <template>
-  <div>分类管理</div>
+  <div>222</div>
 </template>
 <script lang="ts" setup></script>
 <style scoped></style>

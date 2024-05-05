@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import ArticleView from '../views/Article/ArticleView.vue'
 import TagsManagement from '../views/Article/TagsManagement.vue'
 import ArticleManagement from '../views/Article/ArticleManagement.vue'
 import CategoriesManagement from '../views/Article/CategoriesManagement.vue'

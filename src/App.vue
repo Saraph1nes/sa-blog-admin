@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watchEffect, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import service from '@/utils/http'
 
 import type { Ref } from 'vue'
@@ -20,7 +21,37 @@ type IMenu = ITimestamps &
     SubMenus: IMenu[]
   }
 
+type IFlatMenu = Omit<IMenu, 'SubMenus'>
+
 const menuDataset: Ref<null | IMenu[]> = ref(null)
+
+const flatMenuDataset: Ref<null | IFlatMenu[]> = ref(null)
+
+const routeName = computed(() => {
+  return flatMenuDataset.value?.find((item) => item.Url === route.path)?.MenuName
+})
+
+const route = useRoute()
+
+// menuDataset树转列表
+const flatMenu = (menuDataset: IMenu[]): IFlatMenu[] => {
+  const res: IFlatMenu[] = []
+  if (!menuDataset.length) {
+    return []
+  }
+  menuDataset.forEach((item) => {
+    if (item.SubMenus.length) {
+      res.push(...flatMenu(item.SubMenus))
+    } else {
+      res.push(item)
+    }
+  })
+  return res
+}
+
+watchEffect(() => {
+  flatMenuDataset.value = flatMenu(menuDataset.value || [])
+})
 
 onMounted(async () => {
   const fetchGetMenus = (): Promise<RequestCommonRes<IMenu[]>> => {
@@ -69,6 +100,8 @@ onMounted(async () => {
         </el-menu>
       </el-aside>
       <el-main>
+        <!-- <div>{{ routeName }}</div>
+        <el-divider /> -->
         <router-view></router-view>
       </el-main>
     </el-container>
