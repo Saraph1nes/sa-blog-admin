@@ -10,10 +10,6 @@ export type ITimestamps = {
   UpdatedAt: string
 }
 
-export type ISoftDeletes = {
-  DeletedAt: string | null
-}
-
 export type IOperators = {
   CreatedBy: string
   UpdatedBy: string

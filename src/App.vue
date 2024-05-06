@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref, watchEffect, computed } from 'vue'
-import { useRoute } from 'vue-router'
 import service from '@/utils/http'
+import { computed, onMounted, ref, watchEffect } from 'vue'
+import { useRoute } from 'vue-router'
 
+import type { IOperators, ITimestamps, RequestCommonRes } from '@/types/common'
 import type { Ref } from 'vue'
-import type { RequestCommonRes, ITimestamps, ISoftDeletes, IOperators } from '@/types/common'
 
 type IMenu = ITimestamps &
-  ISoftDeletes &
   IOperators & {
     ID: number
     MenuName: string
