@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import service from '@/utils/http'
 import { Plus, Search } from '@element-plus/icons-vue'
-import dayjs from 'dayjs'
+import { ElMessage } from 'element-plus'
 import { onMounted, ref, watch } from 'vue'
+import dayjs from 'dayjs'
 
-import type { ITimestamps, RequestCommonRes } from '@/types/common'
+import type { CommonCountResponse, ITimestamps, RequestCommonRes } from '@/types/common'
 import type { Ref } from 'vue'
 
 type IArticle = ITimestamps & {
@@ -37,14 +38,17 @@ const searchForm: Ref<{
   category: '-1'
 })
 
-const fetchGetArticle = async (): Promise<RequestCommonRes<IArticle[]>> => {
-  const { Data } = await service.get('/admin/getArticle', {
-    params: {
-      pageIndex: pageIndex.value,
-      pageSize: pageSize.value,
-      ...searchForm.value
+const fetchGetArticle = async (): Promise<void> => {
+  const { Data }: RequestCommonRes<CommonCountResponse<IArticle>> = await service.get(
+    '/admin/getArticle',
+    {
+      params: {
+        pageIndex: pageIndex.value,
+        pageSize: pageSize.value,
+        ...searchForm.value
+      }
     }
-  })
+  )
   articles.value = Data.List
   articlesCount.value = Data.Count
 }
@@ -68,15 +72,18 @@ const onSearch = () => {
 }
 
 const fetchArticleToggleShelf = async (id: number, isPublished: number) => {
-  const { Success, Msg } = await service.post('/admin/articleToggleShelf', {
-    id,
-    isPublished
-  })
+  const { Success, Msg }: RequestCommonRes<string> = await service.post(
+    '/admin/articleToggleShelf',
+    {
+      id,
+      isPublished: `${isPublished}`
+    }
+  )
   if (!Success) {
     ElMessage.error(Msg || '请求接口错误')
     return
   }
-  ElMessage.success(`${isPublished === 1 ? '下架' : '上架'}成功`)
+  ElMessage.success(`${isPublished === 1 ? '上' : '下'}架成功`)
   fetchGetArticle()
 }
 
@@ -108,7 +115,7 @@ const handleArticleToggleShelf = async (id: number, isPublished: number) => {
 
   <el-button type="success" :icon="Plus"> 新增文章 </el-button>
 
-  <el-table class="mt-8" :data="articles" stripe row-key="ID">
+  <el-table class="mt-4" :data="articles" stripe row-key="ID">
     <el-table-column prop="ID" label="ID" width="80" />
     <el-table-column prop="Name" label="名称" />
     <el-table-column prop="Picture" label="图片">
@@ -121,7 +128,7 @@ const handleArticleToggleShelf = async (id: number, isPublished: number) => {
     <el-table-column prop="IsPublished" label="是否发布">
       <template #default="scope">
         <el-tag v-if="scope.row.IsPublished" type="success"> 是 </el-tag>
-        <el-tag v-else type="success"> 否 </el-tag>
+        <el-tag v-else type="error"> 否 </el-tag>
       </template>
     </el-table-column>
     <el-table-column prop="CategoryName" label="分类名称" />

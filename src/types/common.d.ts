@@ -5,6 +5,11 @@ export type RequestCommonRes<T> = {
   Success: boolean
 }
 
+export type CommonCountResponse<T> = {
+  List: T[]
+  Count: number
+}
+
 export type ITimestamps = {
   CreatedAt: string
   UpdatedAt: string

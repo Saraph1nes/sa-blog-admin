@@ -66,15 +66,13 @@ onMounted(async () => {
 <template>
   <el-container class="min-h-screen">
     <el-container>
-      <el-aside class="border-r" width="200px">
-        <el-header class="h-auto flex items-center border-b">
-          <div
-            class="flex-1 text-lg text-black font-bold text-center pointer-events-none select-none flex items-center"
-          >
-            <img height="30" width="30" src="https://www.sablogs.cn/favicon.ico" />
-            <span class="ml-2">SaAdmin</span>
+      <el-aside width="200px">
+        <el-header class="h-auto flex items-center justify-center">
+          <div class="text-lg text-white font-bold text-center pointer-events-none select-none">
+            SaAdmin
           </div>
         </el-header>
+        <el-divider class="!m-0 !p-0" />
         <el-menu class="!border-none">
           <template v-for="menuItem in menuDataset" :key="menuItem.ID">
             <el-sub-menu v-if="menuItem.SubMenus.length > 0" :index="`${menuItem.ID}`">
@@ -98,9 +96,8 @@ onMounted(async () => {
           </template>
         </el-menu>
       </el-aside>
+      <el-divider direction="vertical" class="!h-screen !m-0 !p-0" />
       <el-main>
-        <!-- <div>{{ routeName }}</div>
-        <el-divider /> -->
         <router-view></router-view>
       </el-main>
     </el-container>
