@@ -28,6 +28,8 @@ const articlesCount: Ref<number> = ref(0)
 const pageIndex: Ref<number> = ref(1)
 const pageSize: Ref<number> = ref(10)
 
+const loading = ref<boolean>(false)
+
 const searchForm: Ref<{
   title: string
   isPublished: string
@@ -39,6 +41,7 @@ const searchForm: Ref<{
 })
 
 const fetchGetArticle = async (): Promise<void> => {
+  loading.value = true
   const { Data }: RequestCommonRes<CommonCountResponse<IArticle>> = await service.get(
     '/admin/getArticle',
     {
@@ -51,6 +54,7 @@ const fetchGetArticle = async (): Promise<void> => {
   )
   articles.value = Data.List
   articlesCount.value = Data.Count
+  loading.value = false
 }
 
 watch(pageIndex, async () => {
@@ -109,13 +113,15 @@ const handleArticleToggleShelf = async (id: number, isPublished: number) => {
       </el-select>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" :icon="Search" @click="onSearch">查询</el-button>
+      <el-button type="primary" :icon="Search" @click="onSearch" :loading="loading">查询</el-button>
     </el-form-item>
   </el-form>
 
-  <el-button type="success" :icon="Plus"> 新增文章 </el-button>
+  <router-link to="/article/0">
+    <el-button type="success" :icon="Plus"> 新增文章 </el-button>
+  </router-link>
 
-  <el-table class="mt-4" :data="articles" stripe row-key="ID">
+  <el-table v-loading="loading" class="mt-4" :data="articles" stripe row-key="ID">
     <el-table-column prop="ID" label="ID" width="80" />
     <el-table-column prop="Name" label="名称" />
     <el-table-column prop="Picture" label="图片">
