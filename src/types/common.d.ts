@@ -32,13 +32,12 @@ export type ITag = ITimestamps & {
 }
 
 export type IArticle = ITimestamps & {
-  CategoryId: number
+  CategoryId: number | null
   Content: string
-  DeletedAt: string | null
   ID: number
   IsPublished: 0 | 1
   Name: string
   Picture: string
   Summary: string
-  TagId: number
+  TagId: number | null
 }
