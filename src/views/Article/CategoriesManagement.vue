@@ -3,15 +3,8 @@ import service from '@/utils/http'
 import dayjs from 'dayjs'
 import { onMounted, ref, watch } from 'vue'
 
-import type { ITimestamps, RequestCommonRes } from '@/types/common'
+import type { RequestCommonRes, ICategory } from '@/types/common'
 import type { Ref } from 'vue'
-
-type ICategory = ITimestamps & {
-  ID: number
-  Name: string
-  CreatedAt: string
-  UpdatedAt: string
-}
 
 const categories: Ref<ICategory[]> = ref([])
 const categoriesCount: Ref<number> = ref(0)

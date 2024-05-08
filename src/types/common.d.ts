@@ -19,3 +19,26 @@ export type IOperators = {
   CreatedBy: string
   UpdatedBy: string
 }
+
+export type ICategory = ITimestamps & {
+  ID: number
+  Name: string
+}
+
+export type ITag = ITimestamps & {
+  ID: number
+  Name: string
+  CategoryId: number
+}
+
+export type IArticle = ITimestamps & {
+  CategoryId: number
+  Content: string
+  DeletedAt: string | null
+  ID: number
+  IsPublished: 0 | 1
+  Name: string
+  Picture: string
+  Summary: string
+  TagId: number
+}

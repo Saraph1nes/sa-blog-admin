@@ -96,7 +96,11 @@ const handleArticleToggleShelf = async (id: number, isPublished: number) => {
 }
 </script>
 <template>
-  <el-form inline>
+  <el-breadcrumb separator="/">
+    <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+    <el-breadcrumb-item> 文章管理 </el-breadcrumb-item>
+  </el-breadcrumb>
+  <el-form inline class="mt-8">
     <el-form-item label="标题">
       <el-input
         v-model="searchForm.title"
@@ -160,7 +164,9 @@ const handleArticleToggleShelf = async (id: number, isPublished: number) => {
           上架
         </el-button>
         <el-button link type="primary" size="small"> 详情 </el-button>
-        <el-button link type="primary" size="small">编辑</el-button>
+        <el-button link type="primary" size="small">
+          <router-link :to="`/article/${scope.row.ID}`">编辑</router-link>
+        </el-button>
         <el-button link type="danger" size="small">删除</el-button>
       </template>
     </el-table-column>
