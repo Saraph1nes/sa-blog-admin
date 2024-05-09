@@ -66,7 +66,7 @@ onMounted(async () => {
 <template>
   <el-container class="min-h-screen">
     <el-container>
-      <el-aside width="200px">
+      <el-aside width="200px" class="fixed border-r h-screen border-[#4c4d4f]">
         <el-header class="h-auto flex items-center justify-center">
           <div class="text-lg text-white font-bold text-center pointer-events-none select-none">
             SaAdmin
@@ -96,8 +96,7 @@ onMounted(async () => {
           </template>
         </el-menu>
       </el-aside>
-      <el-divider direction="vertical" class="!h-screen !m-0 !p-0" />
-      <el-main>
+      <el-main class="ml-[200px]">
         <router-view></router-view>
       </el-main>
     </el-container>

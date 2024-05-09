@@ -11,6 +11,7 @@ import type {
   ITag,
   ITimestamps
 } from '@/types/common'
+import { ElMessage } from 'element-plus'
 
 const route = useRoute()
 
@@ -37,6 +38,7 @@ const fetchGetArticleById = async (id: number): Promise<RequestCommonRes<IArticl
 const fetchGetCategory = (): Promise<RequestCommonRes<CommonCountResponse<ICategory>>> => {
   return service.get('/admin/getCategory')
 }
+
 const fetchGetTags = (): Promise<RequestCommonRes<ITag[]>> => {
   return service.get('/admin/getTags')
 }
@@ -54,9 +56,74 @@ const onSubmit = () => {
 
 const categoryDialogVisible = ref(false)
 
-const categoryForm = ref({
+const categoryForm = ref<{
+  Name: string
+}>({
   Name: ''
 })
+
+const fetchSaveCategory = (id: string, name: string): Promise<RequestCommonRes<ICategory>> => {
+  return service.post('/admin/saveCategory', {
+    id,
+    name
+  })
+}
+
+const onSaveCategory = async () => {
+  const { Name } = categoryForm.value
+  const { Success, Msg } = await fetchSaveCategory('0', Name)
+
+  if (!Success) {
+    ElMessage.error(Msg || '保存失败')
+    return
+  }
+
+  ElMessage.success('保存成功')
+
+  const GetCategoryRes: RequestCommonRes<CommonCountResponse<ICategory>> = await fetchGetCategory()
+
+  categories.value = GetCategoryRes.Data.List
+
+  categoryDialogVisible.value = false
+}
+
+const tagDialogVisible = ref(false)
+
+const tagForm = ref<{
+  CategoryId: string
+}>({
+  Name: ''
+})
+
+const fetchSaveTag = (
+  id: string,
+  categoryId: string,
+  name: string
+): Promise<RequestCommonRes<ICategory>> => {
+  return service.post('/admin/saveTag', {
+    id,
+    categoryId,
+    name
+  })
+}
+
+const onSaveTag = async () => {
+  const { Name } = tagForm.value
+  const { Success, Msg } = await fetchSaveTag('0', `${articleData.value.CategoryId}`, Name)
+
+  if (!Success) {
+    ElMessage.error(Msg || '保存失败')
+    return
+  }
+
+  ElMessage.success('保存成功')
+
+  const GetTagsRes: RequestCommonRes<ITag[]> = await fetchGetTags()
+
+  tags.value = GetTagsRes.Data
+
+  tagDialogVisible.value = false
+}
 
 onMounted(async () => {
   const GetCategoryRes: RequestCommonRes<CommonCountResponse<ICategory>> = await fetchGetCategory()
@@ -85,7 +152,7 @@ onMounted(async () => {
   </el-breadcrumb>
 
   <el-form class="mt-8" :model="articleData" label-width="auto" style="max-width: 1200px">
-    <el-form-item label="文章标题">
+    <el-form-item label="文章标题" prop="Name">
       <el-input v-model="articleData.Name" />
     </el-form-item>
     <el-form-item label="AI总结">
@@ -99,8 +166,16 @@ onMounted(async () => {
         <el-option v-for="item in categories" :key="item.ID" :label="item.Name" :value="item.ID" />
       </el-select>
     </el-form-item>
-    <el-form-item v-if="tagsFilterByCategoryId.length" label="文章标签">
-      <el-select v-model="articleData.TagId" placeholder="请选择文章标签" clearable>
+    <el-form-item label="文章标签" v-if="articleData.CategoryId > 0">
+      <el-select
+        v-if="tagsFilterByCategoryId.length"
+        v-model="articleData.TagId"
+        placeholder="请选择文章标签"
+        clearable
+      >
+        <template #header>
+          <el-button link type="success" @click="tagDialogVisible = true">新增标签</el-button>
+        </template>
         <el-option
           v-for="item in tagsFilterByCategoryId"
           :key="item.ID"
@@ -108,6 +183,7 @@ onMounted(async () => {
           :value="item.ID"
         />
       </el-select>
+      <el-button v-else type="success" plain @click="tagDialogVisible = true"> 新增标签 </el-button>
     </el-form-item>
 
     <el-form-item label="文章内容">
@@ -121,7 +197,7 @@ onMounted(async () => {
     <el-form-item>
       <div>
         <el-button type="primary" @click="onSubmit">保存</el-button>
-        <el-button>回退</el-button>
+        <el-button @click="$router.back()">回退</el-button>
       </div>
     </el-form-item>
   </el-form>
@@ -135,7 +211,21 @@ onMounted(async () => {
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="categoryDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="categoryDialogVisible = true"> 确认 </el-button>
+        <el-button type="primary" @click="onSaveCategory"> 确认 </el-button>
+      </div>
+    </template>
+  </el-dialog>
+
+  <el-dialog v-model="tagDialogVisible" title="新增标签" width="500">
+    <el-form :model="tagForm">
+      <el-form-item label="标签名称">
+        <el-input v-model="tagForm.Name" autocomplete="off" />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="tagDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="onSaveTag"> 确认 </el-button>
       </div>
     </template>
   </el-dialog>
