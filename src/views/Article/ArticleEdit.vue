@@ -50,8 +50,26 @@ const tagsFilterByCategoryId = computed(() => {
   return tags.value.filter((item) => item.CategoryId === articleData.value.CategoryId)
 })
 
-const onSubmit = () => {
-  console.log('e', articleData.value)
+const fetchSaveArticle = (params: IArticle): Promise<RequestCommonRes<IArticle>> => {
+  return service.post('/admin/saveArticle', {
+    id: params.ID,
+    name: params.Name,
+    content: params.Content,
+    summary: params.Summary,
+    picture: params.Picture,
+    categoryId: params.CategoryId,
+    tagId: params.TagId,
+    isPublished: params.IsPublished
+  })
+}
+
+const onSubmit = async (params: IArticle) => {
+  const { Data, Success, Msg } = await fetchSaveArticle(params)
+  if (!Success) {
+    ElMessage.error(Msg || '保存失败')
+    return
+  }
+  console.log('e', Data)
 }
 
 const categoryDialogVisible = ref(false)
@@ -90,7 +108,7 @@ const onSaveCategory = async () => {
 const tagDialogVisible = ref(false)
 
 const tagForm = ref<{
-  CategoryId: string
+  Name: string
 }>({
   Name: ''
 })
@@ -166,7 +184,7 @@ onMounted(async () => {
         <el-option v-for="item in categories" :key="item.ID" :label="item.Name" :value="item.ID" />
       </el-select>
     </el-form-item>
-    <el-form-item label="文章标签" v-if="articleData.CategoryId > 0">
+    <el-form-item label="文章标签" v-if="articleData.CategoryId && articleData.CategoryId > 0">
       <el-select
         v-if="tagsFilterByCategoryId.length"
         v-model="articleData.TagId"

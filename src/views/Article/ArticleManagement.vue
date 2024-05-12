@@ -76,6 +76,7 @@ const onSearch = () => {
 }
 
 const fetchArticleToggleShelf = async (id: number, isPublished: number) => {
+  loading.value = true
   const { Success, Msg }: RequestCommonRes<string> = await service.post(
     '/admin/articleToggleShelf',
     {
@@ -88,11 +89,30 @@ const fetchArticleToggleShelf = async (id: number, isPublished: number) => {
     return
   }
   ElMessage.success(`${isPublished === 1 ? '上' : '下'}架成功`)
-  fetchGetArticle()
+  // fetchGetArticle()
+  loading.value = false
 }
 
 const handleArticleToggleShelf = async (id: number, isPublished: number) => {
-  fetchArticleToggleShelf(id, isPublished === 1 ? 0 : 1)
+  fetchArticleToggleShelf(id, isPublished)
+}
+
+const fetchDeleteArticle = async (id: number) => {
+  loading.value = true
+  const { Success, Msg }: RequestCommonRes<string> = await service.post('/admin/deleteArticle', {
+    id
+  })
+  if (!Success) {
+    ElMessage.error(Msg || '请求接口错误')
+    return
+  }
+  ElMessage.success(`删除成功`)
+  fetchGetArticle()
+  loading.value = false
+}
+
+const handleDelete = async (id: number) => {
+  fetchDeleteArticle(id)
 }
 </script>
 <template>
@@ -135,17 +155,30 @@ const handleArticleToggleShelf = async (id: number, isPublished: number) => {
         </div>
       </template>
     </el-table-column>
-    <el-table-column prop="IsPublished" label="是否发布">
-      <template #default="scope">
-        <el-tag v-if="scope.row.IsPublished" type="success"> 是 </el-tag>
-        <el-tag v-else type="error"> 否 </el-tag>
-      </template>
-    </el-table-column>
     <el-table-column prop="CategoryName" label="分类名称" />
     <el-table-column prop="TagName" label="标签名称" />
+    <el-table-column prop="CommentCount" label="评论数" />
+    <el-table-column prop="CreatedAt" label="创建时间">
+      <template #default="scope">
+        {{ dayjs(scope.row.CreatedAt).format('YYYY-MM-DD HH:mm:ss') }}
+      </template>
+    </el-table-column>
+    <el-table-column prop="IsPublished" label="是否发布">
+      <template #default="scope">
+        <el-switch
+          v-model="scope.row.IsPublished"
+          inline-prompt
+          active-text="开启"
+          inactive-text="关闭"
+          :active-value="1"
+          :inactive-value="0"
+          @change="() => handleArticleToggleShelf(scope.row.ID, scope.row.IsPublished)"
+        />
+      </template>
+    </el-table-column>
     <el-table-column fixed="right" label="操作">
       <template #default="scope">
-        <el-button
+        <!-- <el-button
           v-if="scope.row.IsPublished === 1"
           link
           type="primary"
@@ -162,18 +195,19 @@ const handleArticleToggleShelf = async (id: number, isPublished: number) => {
           @click="() => handleArticleToggleShelf(scope.row.ID, scope.row.IsPublished)"
         >
           上架
-        </el-button>
+        </el-button> -->
         <el-button link type="primary" size="small"> 详情 </el-button>
         <el-button link type="primary" size="small">
           <router-link :to="`/article/${scope.row.ID}`">编辑</router-link>
         </el-button>
-        <el-button link type="danger" size="small">删除</el-button>
-      </template>
-    </el-table-column>
-    <el-table-column prop="CommentCount" label="评论数" />
-    <el-table-column prop="CreatedAt" label="创建时间">
-      <template #default="scope">
-        {{ dayjs(scope.row.CreatedAt).format('YYYY-MM-DD HH:mm:ss') }}
+        <el-popconfirm
+          :title="`你确定删除${scope.row.Name}吗？`"
+          @confirm="handleDelete(scope.row.ID)"
+        >
+          <template #reference>
+            <el-button link type="danger" size="small">删除</el-button>
+          </template>
+        </el-popconfirm>
       </template>
     </el-table-column>
   </el-table>
