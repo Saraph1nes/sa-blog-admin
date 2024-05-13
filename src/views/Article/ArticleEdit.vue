@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import service from '@/utils/http'
 import type {
@@ -14,10 +14,13 @@ import type {
 import { ElMessage } from 'element-plus'
 
 const route = useRoute()
+const router = useRouter()
 
 const routeId = route.params.id
 
-const articleData = ref<Omit<IArticle, keyof ITimestamps>>({
+type IArticleForm = Omit<IArticle, keyof ITimestamps>
+
+const articleData = ref<IArticleForm>({
   CategoryId: null,
   Content: '',
   ID: 0,
@@ -50,7 +53,7 @@ const tagsFilterByCategoryId = computed(() => {
   return tags.value.filter((item) => item.CategoryId === articleData.value.CategoryId)
 })
 
-const fetchSaveArticle = (params: IArticle): Promise<RequestCommonRes<IArticle>> => {
+const fetchSaveArticle = (params: IArticleForm): Promise<RequestCommonRes<IArticle>> => {
   return service.post('/admin/saveArticle', {
     id: params.ID,
     name: params.Name,
@@ -63,13 +66,13 @@ const fetchSaveArticle = (params: IArticle): Promise<RequestCommonRes<IArticle>>
   })
 }
 
-const onSubmit = async (params: IArticle) => {
-  const { Data, Success, Msg } = await fetchSaveArticle(params)
+const onSubmit = async () => {
+  const { Data, Success, Msg } = await fetchSaveArticle(articleData.value)
   if (!Success) {
-    ElMessage.error(Msg || '保存失败')
     return
   }
-  console.log('e', Data)
+  ElMessage.success('保存成功')
+  router.push('/article')
 }
 
 const categoryDialogVisible = ref(false)
@@ -215,7 +218,9 @@ onMounted(async () => {
     <el-form-item>
       <div>
         <el-button type="primary" @click="onSubmit">保存</el-button>
-        <el-button @click="$router.back()">回退</el-button>
+        <router-link to="/article">
+          <el-button>回退</el-button>
+        </router-link>
       </div>
     </el-form-item>
   </el-form>
