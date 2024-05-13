@@ -215,11 +215,15 @@ onMounted(async () => {
       <el-input v-model="articleData.Picture" />
     </el-form-item>
 
-    <el-form-item>
+    <el-form-item label="文章封面预览" v-show="!!articleData.Picture">
+      <el-image :src="articleData.Picture" fit="contain" class="h-80"></el-image>
+    </el-form-item>
+
+    <el-form-item class="ml-24">
       <div>
         <el-button type="primary" @click="onSubmit">保存</el-button>
-        <router-link to="/article">
-          <el-button>回退</el-button>
+        <router-link to="/article" class="ml-4">
+          <el-button>返回</el-button>
         </router-link>
       </div>
     </el-form-item>

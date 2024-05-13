@@ -163,6 +163,11 @@ const handleDelete = async (id: number) => {
         {{ dayjs(scope.row.CreatedAt).format('YYYY-MM-DD HH:mm:ss') }}
       </template>
     </el-table-column>
+    <el-table-column prop="UpdatedAt" label="更新时间">
+      <template #default="scope">
+        {{ dayjs(scope.row.UpdatedAt).format('YYYY-MM-DD HH:mm:ss') }}
+      </template>
+    </el-table-column>
     <el-table-column prop="IsPublished" label="是否发布">
       <template #default="scope">
         <el-switch
@@ -196,7 +201,7 @@ const handleDelete = async (id: number) => {
         >
           上架
         </el-button> -->
-        <el-button link type="primary" size="small"> 详情 </el-button>
+        <!-- <el-button link type="primary" size="small"> 详情 </el-button> -->
         <el-button link type="primary" size="small">
           <router-link :to="`/article/${scope.row.ID}`">编辑</router-link>
         </el-button>
