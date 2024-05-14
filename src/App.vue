@@ -64,15 +64,15 @@ onMounted(async () => {
 </script>
 
 <template>
-  <el-container class="min-h-screen">
-    <el-container>
-      <el-aside width="200px" class="fixed border-r h-screen border-[#4c4d4f]">
-        <el-header class="h-auto flex items-center justify-center">
-          <div class="text-lg text-white font-bold text-center pointer-events-none select-none">
-            SaAdmin
-          </div>
-        </el-header>
-        <el-divider class="!m-0 !p-0" />
+  <el-container>
+    <el-header class="fixed top-0 w-screen h-[60px] items-center flex border-b border-[#4C4D4F]">
+      <div class="flex items-center justify-between flex-1">
+        <div class="text-lg text-white font-bold pointer-events-none select-none">SaAdmin</div>
+        <div>132</div>
+      </div>
+    </el-header>
+    <el-container class="mt-[60px]">
+      <el-aside width="200px">
         <el-menu class="!border-none">
           <template v-for="menuItem in menuDataset" :key="menuItem.ID">
             <el-sub-menu v-if="menuItem.SubMenus.length > 0" :index="`${menuItem.ID}`">
@@ -96,9 +96,10 @@ onMounted(async () => {
           </template>
         </el-menu>
       </el-aside>
-      <el-main class="ml-[200px]">
-        <router-view></router-view>
-      </el-main>
+      <el-container>
+        <el-main><router-view></router-view></el-main>
+        <el-footer class="text-center"> Copyright © 2024 </el-footer>
+      </el-container>
     </el-container>
   </el-container>
 </template>
