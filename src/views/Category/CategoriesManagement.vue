@@ -1,9 +1,11 @@
 <script lang="ts" setup>
 import service from '@/utils/http'
 import dayjs from 'dayjs'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
+import { Plus } from '@element-plus/icons-vue'
+import AddCategoryDialog from '../../components/Category/AddCategoryDialog.vue'
 
-import type { RequestCommonRes, ICategory } from '@/types/common'
+import type { RequestCommonRes, ICategory, CommonCountResponse } from '@/types/common'
 import type { Ref } from 'vue'
 
 const categories: Ref<ICategory[]> = ref([])
@@ -11,23 +13,9 @@ const categoriesCount: Ref<number> = ref(0)
 const pageIndex: Ref<number> = ref(1)
 const pageSize: Ref<number> = ref(10)
 
-const fetchGetCategory = (): Promise<RequestCommonRes<ICategory[]>> => {
+const fetchGetCategory = (): Promise<RequestCommonRes<CommonCountResponse<ICategory>>> => {
   return service.get('/admin/getCategory')
 }
-
-watch(pageIndex, async () => {
-  const { Data } = await fetchGetCategory(pageIndex.value, pageSize.value)
-
-  categories.value = Data.List
-  categoriesCount.value = Data.Count
-})
-
-watch(pageSize, async () => {
-  pageIndex.value = 1
-  const { Data } = await fetchGetCategory(pageIndex.value, pageSize.value)
-  categories.value = Data.List
-  categoriesCount.value = Data.Count
-})
 
 onMounted(async () => {
   const { Data } = await fetchGetCategory()
@@ -36,7 +24,11 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <el-table :data="categories" stripe row-key="ID">
+  <AddCategoryDialog>
+    <el-button type="success" :icon="Plus"> 新增分类 </el-button>
+  </AddCategoryDialog>
+
+  <el-table :data="categories" stripe row-key="ID" class="mt-4">
     <el-table-column prop="ID" label="ID" width="80" />
     <el-table-column prop="Name" label="分类名称" />
     <el-table-column prop="CreatedAt" label="创建时间">

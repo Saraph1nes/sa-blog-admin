@@ -3,7 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import TagsManagement from '../views/Article/TagsManagement.vue'
 import ArticleManagement from '../views/Article/ArticleManagement.vue'
 import ArticleEdit from '../views/Article/ArticleEdit.vue'
-import CategoriesManagement from '../views/Article/CategoriesManagement.vue'
+import CategoriesManagement from '../views/Category/CategoriesManagement.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

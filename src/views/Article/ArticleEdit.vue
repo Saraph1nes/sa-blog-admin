@@ -182,7 +182,11 @@ onMounted(async () => {
     <el-form-item label="文章分类">
       <el-select v-model="articleData.CategoryId" placeholder="请选择文章分类">
         <template #header>
-          <el-button link type="success" @click="categoryDialogVisible = true">新增分类</el-button>
+          <AddCategoryDialog>
+            <el-button link type="success" @click="categoryDialogVisible = true"
+              >新增分类</el-button
+            >
+          </AddCategoryDialog>
         </template>
         <el-option v-for="item in categories" :key="item.ID" :label="item.Name" :value="item.ID" />
       </el-select>
