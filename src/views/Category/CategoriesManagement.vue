@@ -4,7 +4,7 @@ import dayjs from 'dayjs'
 import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
-import AddCategoryDialog from '../../components/Category/AddCategoryDialog.vue'
+import SaveCategoryDialog from '../../components/Category/SaveCategoryDialog.vue'
 
 import type { RequestCommonRes, ICategory, CommonCountResponse } from '@/types/common'
 import type { Ref } from 'vue'
@@ -15,9 +15,10 @@ const categoriesCount: Ref<number> = ref(0)
 // const pageIndex: Ref<number> = ref(1)
 // const pageSize: Ref<number> = ref(10)
 
-const fetchGetCategory = async (): Promise<RequestCommonRes<CommonCountResponse<ICategory>>> => {
+const fetchGetCategory = async () => {
   loading.value = true
-  const { Data } = await service.get('/admin/getCategory')
+  const { Data }: RequestCommonRes<CommonCountResponse<ICategory>> =
+    await service.get('/admin/getCategory')
   categories.value = Data.List
   categoriesCount.value = Data.Count
   loading.value = false
@@ -26,10 +27,6 @@ const fetchGetCategory = async (): Promise<RequestCommonRes<CommonCountResponse<
 onMounted(() => {
   fetchGetCategory()
 })
-
-const handleAddCategory = () => {
-  fetchGetCategory()
-}
 
 const fetchDeleteCategory = async (id: number) => {
   loading.value = true
@@ -45,14 +42,14 @@ const fetchDeleteCategory = async (id: number) => {
   loading.value = false
 }
 
-const handleDeleteCategory = async (id) => {
+const handleDeleteCategory = async (id: number) => {
   fetchDeleteCategory(id)
 }
 </script>
 <template>
-  <AddCategoryDialog @save="handleAddCategory">
+  <SaveCategoryDialog @save="fetchGetCategory">
     <el-button :loading="loading" type="success" :icon="Plus"> 新增分类 </el-button>
-  </AddCategoryDialog>
+  </SaveCategoryDialog>
 
   <el-table v-loading="loading" :data="categories" stripe row-key="ID" class="mt-4">
     <el-table-column prop="ID" label="ID" width="80" />
@@ -65,10 +62,15 @@ const handleDeleteCategory = async (id) => {
 
     <el-table-column fixed="right" label="操作">
       <template #default="scope">
-        <el-button link type="primary" size="small">编辑</el-button>
+        <SaveCategoryDialog :name="scope.row.Name" :id="scope.row.ID" @save="fetchGetCategory">
+          <el-button link type="primary" size="small">编辑</el-button>
+        </SaveCategoryDialog>
         <el-popconfirm
           :title="`你确定删除${scope.row.Name}吗？`"
           @confirm="handleDeleteCategory(scope.row.ID)"
+          confirm-button-text="确定"
+          cancel-button-text="取消"
+          cancel-button-type="outline"
         >
           <template #reference>
             <el-button link type="danger" size="small">删除</el-button>

@@ -208,6 +208,9 @@ const handleDelete = async (id: number) => {
         <el-popconfirm
           :title="`你确定删除${scope.row.Name}吗？`"
           @confirm="handleDelete(scope.row.ID)"
+          confirm-button-text="确定"
+          cancel-button-text="取消"
+          cancel-button-type="outline"
         >
           <template #reference>
             <el-button link type="danger" size="small">删除</el-button>
