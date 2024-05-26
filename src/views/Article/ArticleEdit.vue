@@ -113,7 +113,10 @@ const onSaveTag = async () => {
   tagDialogVisible.value = false
 }
 
-const onCategoryDialogSave = () => {}
+const onCategoryDialogSave = async () => {
+  const GetCategoryRes: RequestCommonRes<CommonCountResponse<ICategory>> = await fetchGetCategory()
+  categories.value = GetCategoryRes.Data.List
+}
 
 onMounted(async () => {
   const GetCategoryRes: RequestCommonRes<CommonCountResponse<ICategory>> = await fetchGetCategory()

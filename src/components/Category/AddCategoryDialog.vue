@@ -19,19 +19,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { ref } from 'vue'
 
 import service from '@/utils/http'
-import type {
-  CommonCountResponse,
-  IArticle,
-  ICategory,
-  RequestCommonRes,
-  ITag,
-  ITimestamps
-} from '@/types/common'
+import type { ICategory, RequestCommonRes } from '@/types/common'
 import { ElMessage } from 'element-plus'
+
+type IProps = {
+  id: number
+}
 
 const categoryDialogVisible = ref(false)
 
@@ -41,8 +37,12 @@ const categoryForm = ref<{
   Name: ''
 })
 
-const props = defineProps<{
-  save: () => {}
+const props = withDefaults(defineProps<IProps>(), {
+  id: 0
+})
+
+const emit = defineEmits<{
+  (e: 'save'): void
 }>()
 
 const fetchSaveCategory = (id: string, name: string): Promise<RequestCommonRes<ICategory>> => {
@@ -60,14 +60,9 @@ const onSaveCategory = async () => {
     ElMessage.error(Msg || '保存失败')
     return
   }
-
   ElMessage.success('保存成功')
-
-  const GetCategoryRes: RequestCommonRes<CommonCountResponse<ICategory>> = await fetchGetCategory()
-
-  categories.value = GetCategoryRes.Data.List
-
   categoryDialogVisible.value = false
+  emit('save')
 }
 </script>
 
