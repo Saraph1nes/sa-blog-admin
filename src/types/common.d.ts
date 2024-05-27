@@ -29,6 +29,7 @@ export type ITag = ITimestamps & {
   ID: number
   Name: string
   CategoryId: number
+  CategoryName?: string
 }
 
 export type IArticle = ITimestamps & {

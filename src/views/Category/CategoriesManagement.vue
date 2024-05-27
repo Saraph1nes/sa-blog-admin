@@ -47,8 +47,13 @@ const handleDeleteCategory = async (id: number) => {
 }
 </script>
 <template>
+  <el-breadcrumb separator="/">
+    <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+    <el-breadcrumb-item> 分类管理 </el-breadcrumb-item>
+  </el-breadcrumb>
+
   <SaveCategoryDialog @save="fetchGetCategory">
-    <el-button :loading="loading" type="success" :icon="Plus"> 新增分类 </el-button>
+    <el-button class="mt-8" :loading="loading" type="success" :icon="Plus"> 新增分类 </el-button>
   </SaveCategoryDialog>
 
   <el-table v-loading="loading" :data="categories" stripe row-key="ID" class="mt-4">

@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import TagsManagement from '../views/Article/TagsManagement.vue'
+import TagManagement from '../views/Tag/TagManagement.vue'
 import ArticleManagement from '../views/Article/ArticleManagement.vue'
 import ArticleEdit from '../views/Article/ArticleEdit.vue'
 import CategoriesManagement from '../views/Category/CategoriesManagement.vue'
@@ -25,8 +25,8 @@ const router = createRouter({
     },
     {
       path: '/article/tags',
-      name: 'TagsManagement',
-      component: TagsManagement
+      name: 'TagManagement',
+      component: TagManagement
     },
     {
       path: '/article/categories',
