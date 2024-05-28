@@ -61,11 +61,16 @@ onMounted(async () => {
 
   menuDataset.value = Data
 })
+
+const font = ref({
+  color: 'rgba(0, 0, 0, .15)',
+})
 </script>
 
 <template>
-  <el-container>
-    <el-header class="fixed top-0 w-screen h-[60px] items-center flex border-b border-[#4C4D4F]">
+  <el-watermark :font="font" :content="['saAdmin', 'xiayuxuan']">
+  <el-container class="min-h-screen">
+    <el-header class="fixed top-0 w-screen h-[60px] items-center flex border-b border-[#4C4D4F] z-10 bg-[#1a1a1a]">
       <div class="flex items-center justify-between flex-1">
         <div class="text-lg text-white font-bold pointer-events-none select-none">SaAdmin</div>
         <div>132</div>
@@ -73,7 +78,7 @@ onMounted(async () => {
     </el-header>
     <el-container class="mt-[60px]">
       <el-aside width="200px">
-        <el-menu class="!border-none">
+        <el-menu class="min-h-screen">
           <template v-for="menuItem in menuDataset" :key="menuItem.ID">
             <el-sub-menu v-if="menuItem.SubMenus.length > 0" :index="`${menuItem.ID}`">
               <template #title>
@@ -102,6 +107,7 @@ onMounted(async () => {
       </el-container>
     </el-container>
   </el-container>
+</el-watermark>
 </template>
 
 <style scoped></style>

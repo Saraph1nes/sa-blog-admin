@@ -1,15 +1,13 @@
-import './assets/main.css'
-
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+
 import ElementPlus from 'element-plus'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 
-import App from './App.vue'
 import router from './router'
+import App from './App.vue'
 
-import 'element-plus/dist/index.css'
-import 'element-plus/theme-chalk/dark/css-vars.css'
+import './assets/main.css'
 
 const app = createApp(App)
 
