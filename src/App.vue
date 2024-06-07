@@ -68,7 +68,7 @@ const font = ref({
 </script>
 
 <template>
-  <el-watermark :font="font" :content="['saAdmin', 'xiayuxuan']">
+  <!-- <el-watermark :font="font" :content="['saAdmin', 'xiayuxuan']"> -->
   <el-container class="min-h-screen">
     <el-header class="fixed top-0 w-screen h-[60px] items-center flex border-b border-[#4C4D4F] z-10 bg-[#1a1a1a]">
       <div class="flex items-center justify-between flex-1">
@@ -107,7 +107,7 @@ const font = ref({
       </el-container>
     </el-container>
   </el-container>
-</el-watermark>
+<!-- </el-watermark> -->
 </template>
 
 <style scoped></style>
