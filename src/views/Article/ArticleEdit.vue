@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import 'cherry-markdown/dist/cherry-markdown.css'
+import Cherry from 'cherry-markdown'
 
 import service from '@/utils/http'
 import type {
@@ -30,6 +32,8 @@ const articleData = ref<IArticleForm>({
   Summary: '',
   TagId: null
 })
+
+const cherryInstance = ref<null | Cherry>(null)
 
 const categories = ref<ICategory[]>([])
 const tags = ref<ITag[]>([])
@@ -134,6 +138,20 @@ onMounted(async () => {
       GetArticleRes.Data.CategoryId === 0 ? null : GetArticleRes.Data.CategoryId
     articleData.value = GetArticleRes.Data
   }
+
+  cherryInstance.value = new Cherry({
+    id: 'markdown-container',
+    value: articleData.value.Content,
+    isPreviewOnly: false,
+    editor: {
+      defaultModel: 'editOnly'
+    },
+    event: {
+      afterChange: (v) => {
+        articleData.value.Content = String(v)
+      }
+    }
+  })
 })
 </script>
 
@@ -182,7 +200,8 @@ onMounted(async () => {
     </el-form-item>
 
     <el-form-item label="文章内容">
-      <el-input type="textarea" :autosize="{ minRows: 4 }" v-model="articleData.Content" />
+      <!-- <el-input type="textarea" :autosize="{ minRows: 4 }" v-model="articleData.Content" /> -->
+      <div id="markdown-container"></div>
     </el-form-item>
 
     <el-form-item label="文章封面">
